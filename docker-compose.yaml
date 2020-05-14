@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./directus_api:/directus_api
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "8090:80"
+
+  database:
+    image: mysql:5.7
+    volumes:
+      - ./docker/db:/var/lib/mysql
+    environment:
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=yes"
+      - "MYSQL_DATABASE=laravel"
+      - "MYSQL_USER=root"
+      - "MYSQL_PASSWORD="
+      - "MYSQL_ROOT_PASSWORD="
+    ports:
+      - "33061:3306"
+
+  php:
+    image: php:7.4-fpm-alpine
+    working_dir: /directus_api
+    volumes:
+      - ./directus_api:/directus_api
+
+  node:
+    image: node:latest
+    working_dir: /directus_api
+    volumes:
+      - ./directus_api:/directus_api
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    tty: true
